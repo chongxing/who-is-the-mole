@@ -100,11 +100,31 @@ button {
     border-radius: 15px;
     padding: 1.2rem;
     margin: 0.8rem 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    animation: slideIn 0.3s ease;
+}
+
+.player-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    animation: slideIn 0.3s ease;
+    margin-bottom: 1rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.player-number {
+    font-weight: bold;
+    color: #555;
+    font-size: 1.1rem;
+}
+
+.player-header .progress {
+    font-size: 0.9rem;
+    color: #888;
+    background: rgba(0,0,0,0.05);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
 }
 
 @keyframes slideIn {
@@ -116,12 +136,6 @@ button {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.player-name {
-    font-weight: bold;
-    color: #555;
-    font-size: 1rem;
 }
 
 .player-word {

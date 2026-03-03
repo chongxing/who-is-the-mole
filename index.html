@@ -19,7 +19,7 @@
                 <label for="playerCount">玩家人数</label>
                 <div class="input-group">
                     <button type="button" class="btn-minus" onclick="adjustCount(-1)">-</button>
-                    <input type="number" id="playerCount" value="6" min="4" max="20" readonly>
+                    <input type="number" id="playerCount" value="6" min="3" max="20" readonly>
                     <button type="button" class="btn-plus" onclick="adjustCount(1)">+</button>
                 </div>
                 <p class="hint">建议 4-12 人，其中 1 人为卧底</p>
@@ -65,7 +65,7 @@
         function adjustCount(delta) {
             const input = document.getElementById("playerCount");
             let val = parseInt(input.value) + delta;
-            val = Math.max(4, Math.min(20, val));
+            val = Math.max(3, Math.min(20, val));
             input.value = val;
         }
     </script>

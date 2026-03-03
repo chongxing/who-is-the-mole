@@ -8,7 +8,7 @@
  */
 
 const WORDS_FILE = "words_pairs.txt";
-const MIN_PLAYERS = 4;
+const MIN_PLAYERS = 3;
 const MAX_PLAYERS = 20;
 
 let wordPairs = [];
