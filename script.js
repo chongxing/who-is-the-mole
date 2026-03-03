@@ -18,7 +18,7 @@ let gameState = {
     isStarted: false
 };
 
-// 页面加载时预加载词库
+// 页面加载时预加载词库并恢复人数设置
 document.addEventListener("DOMContentLoaded", async () => {
     try {
         wordPairs = await loadWordPairs();
@@ -26,6 +26,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (e) {
         console.error("词库加载失败:", e);
         alert("词库加载失败，请检查 words_pairs.txt 文件是否存在");
+    }
+
+    // 恢复上次选择的人数
+    const savedCount = localStorage.getItem("playerCount");
+    if (savedCount) {
+        document.getElementById("playerCount").value = savedCount;
     }
 });
 
@@ -86,17 +92,20 @@ function assignRolesStandard(playerCount) {
  */
 function startGame() {
     const cnt = parseInt(document.getElementById("playerCount").value);
-    
+
     if (isNaN(cnt) || cnt < MIN_PLAYERS || cnt > MAX_PLAYERS) {
         alert(`玩家人数必须在 ${MIN_PLAYERS} ~ ${MAX_PLAYERS} 之间`);
         return;
     }
-    
+
+    // 保存人数到 localStorage
+    localStorage.setItem("playerCount", cnt);
+
     if (wordPairs.length === 0) {
         alert("词库尚未加载完成");
         return;
     }
-    
+
     // 分配角色
     const { players, pair } = assignRolesStandard(cnt);
     gameState = {
@@ -105,69 +114,72 @@ function startGame() {
         isStarted: true,
         pair: pair
     };
-    
+
     // 切换到游戏界面
     document.getElementById("setupPanel").classList.add("hidden");
     document.getElementById("gamePanel").classList.remove("hidden");
-    
+
     // 显示第一个玩家
     showCurrentPlayer();
-    
+
     // 更新进度
     updateProgress();
 }
 
 /**
- * 显示当前玩家
+ * 显示当前玩家（直接显示词语）
  */
 function showCurrentPlayer() {
     const player = gameState.players[gameState.currentIndex];
     const container = document.getElementById("playerCard");
 
-    // 先隐藏词，只显示玩家名
+    // 直接显示玩家名和词语
     container.innerHTML = `
         <div class="player-header">
             <span class="player-number">${player.name}</span>
             <span class="progress">${gameState.currentIndex + 1} / ${gameState.players.length}</span>
         </div>
-        <div class="word-hidden" onclick="revealWord()">
-            <span class="tap-hint">👆 点击查看词语</span>
-        </div>
-        <div class="word-revealed hidden">
+        <div class="word-revealed">
             <div class="the-word">${player.word}</div>
             <p class="hint-text">记住你的词，但不要说出来！</p>
             <p class="role-hint">🎭 你不知道自己是什么身份</p>
         </div>
     `;
 
-    // 隐藏按钮
-    document.getElementById("nextBtn").classList.add("hidden");
-    document.getElementById("hideBtn").classList.remove("hidden");
-}
-
-/**
- * 显示词语（点击后）
- */
-function revealWord() {
-    document.querySelector(".word-hidden").classList.add("hidden");
-    document.querySelector(".word-revealed").classList.remove("hidden");
+    // 显示"隐藏并下一个"按钮
     document.getElementById("nextBtn").classList.remove("hidden");
     document.getElementById("hideBtn").classList.add("hidden");
 }
 
 /**
- * 隐藏词语（准备传递手机）
+ * 隐藏词语（准备传递手机）- 保留以备后用
  */
 function hideWord() {
     showCurrentPlayer();
 }
 
 /**
- * 下一个玩家
+ * 下一个玩家（先隐藏，再显示下一个）
  */
 function nextPlayer() {
+    // 先隐藏当前内容
+    const container = document.getElementById("playerCard");
+    container.innerHTML = `
+        <div class="pass-screen">
+            <div class="pass-icon">📱</div>
+            <p class="pass-text">请传给下一个玩家</p>
+            <button class="btn-reveal" onclick="showNextPlayer()">下一个玩家查看</button>
+        </div>
+    `;
+    document.getElementById("nextBtn").classList.add("hidden");
+}
+
+/**
+ * 显示下一个玩家
+ */
+function showNextPlayer() {
     gameState.currentIndex++;
-    
+
     if (gameState.currentIndex >= gameState.players.length) {
         // 所有玩家都已查看，显示游戏开始
         showGameStart();
@@ -197,12 +209,12 @@ function showGameStart() {
             <span class="role-tag">${p.role}</span>
         </div>
     `).join('');
-    
+
     document.getElementById("gamePanel").innerHTML = `
         <div class="game-ready">
             <h2>🎮 游戏开始！</h2>
             <p>所有玩家已查看词语，开始描述吧！</p>
-            
+
             <div class="reveal-section">
                 <h3>🔍 身份揭秘（仅主持人查看）</h3>
                 <div class="word-pair-info">
@@ -213,13 +225,54 @@ function showGameStart() {
                     ${playerList}
                 </div>
             </div>
-            
-            <button onclick="location.reload()" class="btn-restart">再玩一局</button>
+
+            <button onclick="resetGame()" class="btn-restart">再玩一局</button>
         </div>
     `;
-    
+
     // 显示导出按钮
     document.getElementById("exportBtn").classList.remove("hidden");
+}
+
+/**
+ * 重置游戏（保留人数设置）
+ */
+function resetGame() {
+    // 重置游戏状态
+    gameState = {
+        players: [],
+        currentIndex: -1,
+        isStarted: false
+    };
+
+    // 恢复游戏面板原始结构
+    document.getElementById("gamePanel").innerHTML = `
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <div id="playerCard" class="player-card">
+            <!-- 动态生成玩家卡片 -->
+        </div>
+
+        <div class="game-controls">
+            <button id="hideBtn" class="btn-secondary hidden">👁️ 隐藏词语</button>
+            <button id="nextBtn" class="btn-primary">我记住了，下一个 →</button>
+        </div>
+    `;
+
+    // 重新绑定事件
+    document.getElementById("nextBtn").addEventListener("click", nextPlayer);
+    document.getElementById("hideBtn").addEventListener("click", hideWord);
+
+    // 隐藏导出按钮
+    document.getElementById("exportBtn").classList.add("hidden");
+
+    // 回到设置界面
+    document.getElementById("gamePanel").classList.add("hidden");
+    document.getElementById("setupPanel").classList.remove("hidden");
+
+    // 人数设置会自动保留（从 localStorage 读取）
 }
 
 /**
