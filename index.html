@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>谁是卧底</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 设置面板 -->
+        <div id="setupPanel" class="panel">
+            <header>
+                <h1>🕵️‍♂️ 谁是卧底</h1>
+                <p class="subtitle">线下聚会文字推理游戏</p>
+            </header>
+
+            <div class="setup-form">
+                <label for="playerCount">玩家人数</label>
+                <div class="input-group">
+                    <button type="button" class="btn-minus" onclick="adjustCount(-1)">-</button>
+                    <input type="number" id="playerCount" value="6" min="4" max="20" readonly>
+                    <button type="button" class="btn-plus" onclick="adjustCount(1)">+</button>
+                </div>
+                <p class="hint">建议 4-12 人，其中 1 人为卧底</p>
+
+                <button id="startBtn" class="btn-primary">开始游戏</button>
+            </div>
+
+            <div class="rules">
+                <h3>游戏规则</h3>
+                <ul>
+                    <li>平民拿到相同的词语</li>
+                    <li>只有卧底拿到不同的词语</li>
+                    <li>轮流描述自己的词语，但不能直接说出</li>
+                    <li>每轮投票选出最可疑的人</li>
+                    <li>卧底全部出局则平民获胜，否则卧底获胜</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 游戏面板 -->
+        <div id="gamePanel" class="panel hidden">
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+
+            <div id="playerCard" class="player-card">
+                <!-- 动态生成玩家卡片 -->
+            </div>
+
+            <div class="game-controls">
+                <button id="hideBtn" class="btn-secondary">👁️ 隐藏词语</button>
+                <button id="nextBtn" class="btn-primary hidden">下一个玩家 →</button>
+            </div>
+        </div>
+
+        <!-- 底部导出按钮 -->
+        <button id="exportBtn" class="btn-export hidden">导出游戏记录</button>
+    </div>
+
+    <script>
+        // 人数调整
+        function adjustCount(delta) {
+            const input = document.getElementById("playerCount");
+            let val = parseInt(input.value) + delta;
+            val = Math.max(4, Math.min(20, val));
+            input.value = val;
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
