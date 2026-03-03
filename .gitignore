@@ -8,7 +8,8 @@ IDENTITY.md
 SOUL.md
 TOOLS.md
 USER.md
-skills/
+skills/*
+!skills/compiler-expert/
 test_stablehlo.py
 who_is_the_mole.py
 requirements.md
