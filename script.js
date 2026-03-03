@@ -124,7 +124,7 @@ function showCurrentPlayer() {
     const player = gameState.players[gameState.currentIndex];
     const container = document.getElementById("playerCard");
     
-    // 先隐藏词，只显示玩家名
+    // 先隐藏词，只显示玩家名（不显示身份！）
     container.innerHTML = `
         <div class="player-header">
             <span class="player-number">${player.name}</span>
@@ -135,9 +135,7 @@ function showCurrentPlayer() {
         </div>
         <div class="word-revealed hidden">
             <div class="the-word">${player.word}</div>
-            <div class="role-badge ${player.isMole ? 'role-mole' : 'role-civilian'}">
-                ${player.role}
-            </div>
+            <p class="hint-text">记住你的词，但不要说出来！</p>
         </div>
     `;
     
@@ -187,20 +185,40 @@ function updateProgress() {
 }
 
 /**
- * 显示游戏开始界面
+ * 显示游戏开始界面（结束后显示身份）
  */
 function showGameStart() {
+    // 生成玩家身份列表（游戏结束后才能看到）
+    const playerList = gameState.players.map(p => `
+        <div class="player-result ${p.isMole ? 'mole' : 'civilian'}">
+            <span>${p.name}</span>
+            <span>${p.word}</span>
+            <span class="role-tag">${p.role}</span>
+        </div>
+    `).join('');
+    
     document.getElementById("gamePanel").innerHTML = `
         <div class="game-ready">
             <h2>🎮 游戏开始！</h2>
-            <p>所有玩家已查看词语</p>
-            <div class="word-pair-info">
-                <p>平民词：<strong>${gameState.pair.civilian}</strong></p>
-                <p>卧底词：<strong>${gameState.pair.mole}</strong></p>
+            <p>所有玩家已查看词语，开始描述吧！</p>
+            
+            <div class="reveal-section">
+                <h3>🔍 身份揭秘（仅主持人查看）</h3>
+                <div class="word-pair-info">
+                    <p>平民词：<strong>${gameState.pair.civilian}</strong></p>
+                    <p>卧底词：<strong>${gameState.pair.mole}</strong></p>
+                </div>
+                <div class="players-reveal">
+                    ${playerList}
+                </div>
             </div>
+            
             <button onclick="location.reload()" class="btn-restart">再玩一局</button>
         </div>
     `;
+    
+    // 显示导出按钮
+    document.getElementById("exportBtn").classList.remove("hidden");
 }
 
 /**
