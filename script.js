@@ -123,8 +123,8 @@ function startGame() {
 function showCurrentPlayer() {
     const player = gameState.players[gameState.currentIndex];
     const container = document.getElementById("playerCard");
-    
-    // 先隐藏词，只显示玩家名（不显示身份！）
+
+    // 先隐藏词，只显示玩家名
     container.innerHTML = `
         <div class="player-header">
             <span class="player-number">${player.name}</span>
@@ -136,9 +136,10 @@ function showCurrentPlayer() {
         <div class="word-revealed hidden">
             <div class="the-word">${player.word}</div>
             <p class="hint-text">记住你的词，但不要说出来！</p>
+            <p class="role-hint">🎭 你不知道自己是什么身份</p>
         </div>
     `;
-    
+
     // 隐藏按钮
     document.getElementById("nextBtn").classList.add("hidden");
     document.getElementById("hideBtn").classList.remove("hidden");
