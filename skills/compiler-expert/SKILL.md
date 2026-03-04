@@ -82,8 +82,100 @@ nm                       # 符号表查看
 - 调试链接错误
 - 设计新的 MLIR Dialect
 
+## 5. AI 编译器 (AI Compiler)
+
+### 5.1 核心概念
+AI 编译器将深度学习模型从框架表示（如 PyTorch、TensorFlow）编译为高效的目标代码（GPU、TPU、NPU）。
+
+### 5.2 主要技术栈
+
+#### XLA (Accelerated Linear Algebra)
+- Google 开发的深度学习编译器
+- 优化线性代数运算
+- 支持 CPU/GPU/TPU
+- 关键优化：算子融合、内存优化、布局转换
+- 使用 HLO (High Level Optimizer) IR
+
+#### TVM (Tensor Virtual Machine)
+- Apache 开源深度学习编译器栈
+- 端到端模型编译和优化
+- 自动调优 (AutoTVM/AutoScheduler)
+- 支持多种后端：CUDA、OpenCL、Vulkan、Metal
+- Relay/TIR 中间表示
+
+#### MLIR for AI
+- **TensorFlow Dialect**: tf.* 操作
+- **PyTorch Dialect (Torch-MLIR)**: 从 PyTorch 导入
+- **ONNX Dialect**: ONNX 模型转换
+- **Linalg Dialect**: 线性代数通用表示
+- **Vector/SCF Dialect**: 向量和结构化控制流
+
+#### IREE (Intermediate Representation Execution Environment)
+- 基于 MLIR 的端到端编译器
+- 针对边缘设备优化
+- 支持 Vulkan、CUDA、Metal
+- 流式执行模型
+
+### 5.3 AI 编译优化技术
+
+#### 算子融合 (Operator Fusion)
+```mlir
+// 融合前
+%0 = "tf.Conv2D"(%input, %filter)
+%1 = "tf.BiasAdd"(%0, %bias)
+%2 = "tf.Relu"(%1)
+
+// 融合后
+%2 = "tf.FusedConv2D"(%input, %filter, %bias) {fused_ops = ["BiasAdd", "Relu"]}
+```
+
+#### 内存优化
+- 缓冲区复用 (Buffer Reuse)
+- 内存池管理
+- 显存优化策略
+
+#### 量化 (Quantization)
+- 权重量化：FP32 → INT8/INT4
+- 激活量化：运行时动态量化
+- 混合精度支持
+
+#### 并行与分布式
+- 数据并行 (Data Parallelism)
+- 模型并行 (Model Parallelism)
+- 流水线并行 (Pipeline Parallelism)
+
+### 5.4 常用工具
+
+```bash
+# TVM
+python -m tvm.driver.tvmc compile model.onnx --target cuda
+
+# XLA
+XLA_FLAGS="--xla_gpu_cuda_data_dir=/usr/local/cuda"
+
+# ONNX 转换
+python -m tf2onnx.convert --saved-model ./model --output model.onnx
+
+# MLIR 转换
+mlir-translate --mlir-to-llvmir input.mlir -o output.ll
+```
+
+### 5.5 典型任务
+- 将 PyTorch 模型编译到特定硬件
+- 分析和优化算子融合机会
+- 实现自定义 AI Dialect
+- 量化模型并评估精度损失
+- 调试 AI 编译器性能瓶颈
+
 ## 参考资源
 
+### 传统编译器
 - LLVM 官方文档: https://llvm.org/docs/
 - MLIR 文档: https://mlir.llvm.org/
 - Compiler Explorer: https://godbolt.org/
+
+### AI 编译器
+- TVM 文档: https://tvm.apache.org/docs/
+- XLA 文档: https://www.tensorflow.org/xla
+- Torch-MLIR: https://github.com/llvm/torch-mlir
+- IREE: https://iree.dev/
