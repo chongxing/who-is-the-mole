@@ -10,6 +10,7 @@ TOOLS.md
 USER.md
 skills/*
 !skills/compiler-expert/
+!skills/clash-verge-config/
 test_stablehlo.py
 who_is_the_mole.py
 requirements.md
