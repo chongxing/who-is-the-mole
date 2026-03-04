@@ -63,6 +63,20 @@
 - ✅ **IREE** - 边缘设备推理引擎
 - ✅ **ONNX** - 模型转换工具链
 
+### DSL 设计与实现
+- ✅ **外部 DSL** - Halide, TACO, Futhark
+- ✅ **内部 DSL** - Python/C++ Embedding
+- ✅ **Parser 生成** - ANTLR4, Flex/Bison
+- ✅ **MLIR Dialect** - 自定义 DSL 编译
+
+### GPGPU 后端
+- ✅ **CUDA** - NVIDIA GPU (PTX/SASS)
+- ✅ **HIP/ROCm** - AMD GPU
+- ✅ **SYCL** - 跨平台 C++17
+- ✅ **OpenCL** - 开放标准
+- ✅ **Vulkan Compute** - SPIR-V
+- ✅ **MLIR GPU Dialect** - 统一 GPU 代码生成
+
 ## 使用方法
 
 ```bash
@@ -85,8 +99,16 @@ python examples/tvm_compile_example.py
 cat examples/mlir_linalg_ai.mlir
 ```
 
-## 典型 AI 编译任务
+## 典型任务
 
+### 传统编译
+| 任务 | 方法 |
+|------|------|
+| 解释 LLVM IR | `opt` + `llvm-dis` |
+| 编写优化 Pass | LLVM Pass 插件 |
+| 跨平台移植 | LLVM Backend |
+
+### AI 编译
 | 任务 | 方法 |
 |------|------|
 | PyTorch → GPU | Torch-MLIR → LLVM → PTX |
@@ -94,4 +116,18 @@ cat examples/mlir_linalg_ai.mlir
 | TensorFlow → TPU | XLA JIT 编译 |
 | 模型量化 | TVM/TensorRT INT8 量化 |
 | 算子融合 | MLIR Linalg Fusion |
-| 自定义硬件 | MLIR Dialect + LLVM Backend |
+
+### DSL 开发
+| 任务 | 方法 |
+|------|------|
+| 设计图像处理 DSL | ANTLR4 + MLIR Dialect |
+| 嵌入 Python DSL | Python Metaclass |
+| 生成 MLIR | DSL → Custom Dialect → LLVM |
+
+### GPGPU 编程
+| 任务 | 方法 |
+|------|------|
+| CUDA 核函数优化 | Shared Memory + Coalescing |
+| 跨平台 GPU | SYCL / OpenCL |
+| MLIR → GPU | GPU Dialect → PTX/SPIR-V |
+| AMD GPU 迁移 | HIPify + ROCm |

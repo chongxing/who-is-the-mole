@@ -167,6 +167,100 @@ mlir-translate --mlir-to-llvmir input.mlir -o output.ll
 - 量化模型并评估精度损失
 - 调试 AI 编译器性能瓶颈
 
+## 6. DSL (领域特定语言) 设计与编译
+
+### 6.1 DSL 设计方法论
+DSL 是针对特定领域优化的编程语言，介于通用语言和手写代码之间。
+
+#### DSL 类型
+- **外部 DSL (External DSL)**: 独立语法，需要完整编译流程
+  - 例子: SQL、Halide、TensorFlow Graph
+- **内部 DSL (Embedded DSL)**: 嵌入在宿主语言中
+  - 例子: PyTorch (Python)、Eigen (C++)
+
+#### DSL 实现技术
+| 技术 | 适用场景 | 代表工具 |
+|------|----------|----------|
+| Parser Combinator | 快速原型 | ANTLR4, Flex/Bison |
+| 语法宏 (Macros) | 内部 DSL | Rust macros, Lisp macros |
+| 元编程 | 编译期生成 | C++ Templates |
+| MLIR Dialect | 计算密集型 DSL | 自定义 Tensor DSL |
+
+### 6.2 DSL 开发工具链
+```bash
+# ANTLR4 生成解析器
+antlr4 -Dlanguage=Python3 -visitor MyDSL.g4
+
+# MLIR Dialect 生成
+mlir-tblgen -gen-dialect-decls MyDialect.td
+
+# DSL 编译测试
+dslc --emit=mlir program.mydsl -o program.mlir
+```
+
+### 6.3 典型 DSL 案例
+- **Halide**: 图像处理 DSL，分离算法与调度
+- **TACO**: 张量代数编译器
+- **Tensor Comprehensions**: 类似 Einstein 求和约定
+- **Futhark**: 数据并行函数式语言
+
+## 7. GPGPU 后端代码生成
+
+### 7.1 主要平台
+| 平台 | 厂商 | 编程模型 | 适用场景 |
+|------|------|----------|----------|
+| **CUDA** | NVIDIA | CUDA C/C++ | 深度学习、科学计算 |
+| **ROCm/HIP** | AMD | HIP | HPC、AI |
+| **OpenCL** | 跨厂商 | C99-based | 嵌入式、跨平台 |
+| **SYCL** | Khronos | C++17 | 现代 C++、跨平台 |
+| **Vulkan Compute** | Khronos | SPIR-V | 游戏、实时图形 |
+
+### 7.2 CUDA 代码生成与优化
+
+#### 编译流程
+```
+CUDA C++ → NVCC → PTX → SASS (机器码)
+```
+
+#### 关键优化技术
+- **线程层次结构**: Grid → Block → Thread
+- **共享内存**: 低延迟、bank conflict 避免
+- **内存合并访问**: Global Memory Coalescing
+- **Occupancy 优化**: 寄存器与共享内存平衡
+- **Warp 级原语**: `__shfl_sync`, `__ballot_sync`
+
+#### 从 MLIR 生成 CUDA
+```mlir
+gpu.launch blocks(%bx, %by, %bz) in (%grid_x, %grid_y, %grid_z)
+            threads(%tx, %ty, %tz) in (%block_x, %block_y, %block_z) {
+  %tidx = gpu.thread_id x
+  %bidx = gpu.block_id x
+  %idx = arith.addi %tidx, %bidx : index
+  memref.store %value, %output[%idx] : memref<1024xf32>
+  gpu.terminator
+}
+```
+
+### 7.3 GPU 编译工具链
+```bash
+# CUDA 编译
+nvcc -arch=sm_75 -O3 kernel.cu -o kernel
+
+# HIP 编译 (AMD)
+hipcc -O3 kernel.cpp -o kernel
+
+# SYCL 编译 (Intel oneAPI)
+dpcpp -O3 kernel.cpp -o kernel
+
+# MLIR GPU → PTX
+mlir-translate --mlir-to-ptx kernel.mlir -o kernel.ptx
+```
+
+### 7.4 GPU 性能分析工具
+- **Nsight Compute**: CUDA 详细性能分析
+- **rocProf**: AMD GPU profiling
+- **Intel VTune**: SYCL/OpenCL 分析
+
 ## 参考资源
 
 ### 传统编译器
@@ -179,3 +273,12 @@ mlir-translate --mlir-to-llvmir input.mlir -o output.ll
 - XLA 文档: https://www.tensorflow.org/xla
 - Torch-MLIR: https://github.com/llvm/torch-mlir
 - IREE: https://iree.dev/
+
+### DSL
+- Halide: https://halide-lang.org/
+- MLIR Dialect 教程: https://mlir.llvm.org/docs/Tutorials/
+
+### GPGPU
+- CUDA 文档: https://docs.nvidia.com/cuda/
+- SYCL 规范: https://www.khronos.org/sycl/
+- ROCm 平台: https://rocmdocs.amd.com/
