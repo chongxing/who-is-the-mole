@@ -1,0 +1,44 @@
+# Chrome Web Store Listing - English Descriptions
+
+## Extension Name (max 75 characters)
+Tab Search - Cross Window
+
+## Short Description (max 132 characters)
+Quickly search and jump to any tab across all windows with keyboard shortcuts
+
+## Detailed Description
+Tab Search - Cross Window helps you find and switch to any open tab instantly, even across multiple browser windows.
+
+**Key Features:**
+
+🔍 **Instant Search** - Type to filter tabs by title or URL in real-time
+
+⌨️ **Keyboard Shortcuts** - Press Ctrl+Shift+T (Cmd+Shift+T on Mac) to open search instantly
+
+🪟 **Cross-Window Support** - Search tabs from all Chrome windows, not just the current one
+
+⚡ **Lightning Fast** - Optimized for speed with no background processes
+
+🎯 **Smart Focus** - Jump directly to your target tab with Enter
+
+**How to use:**
+1. Press Ctrl+Shift+T (or click the extension icon)
+2. Start typing to search your tabs
+3. Use ↑/↓ arrow keys to navigate results
+4. Press Enter to switch to the selected tab
+
+Perfect for power users who keep dozens of tabs open across multiple windows!
+
+**Privacy Note:** This extension only accesses your tab information locally to provide search functionality. No data is sent to any external servers.
+
+## Category
+Productivity
+
+## Language
+English
+
+## Developer Email
+your-email@example.com
+
+## Website
+https://github.com/yourusername/chrome-tab-search

@@ -18,3 +18,15 @@ requirements.md
 upload_to_github.sh
 *.pyc
 __pycache__/
+
+# Chrome Extension - 忽略开发/测试文件
+chrome-tab-search/icon-preview.html
+chrome-tab-search/icon.svg
+chrome-tab-search/icon-preview-v2.html
+chrome-tab-search/diagnostic.html
+chrome-tab-search/test-mock.html
+chrome-tab-search/DEBUG_REPORT.md
+chrome-tab-search/DEBUG_REPORT_FINAL.md
+chrome-tab-search/.DS_Store
+*.zip
+.DS_Store

@@ -1,0 +1,24 @@
+# 忽略开发相关文件
+node_modules/
+*.log
+.DS_Store
+*.zip
+*.tar.gz
+test.html
+test-mock.html
+
+# 忽略编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 忽略生成工具（因为图标已生成）
+icons/generate.html
+icons/icon.svg
+
+# 忽略其他
+README-verbose.md
+chrome-tab-search.zip
+chrome-tab-search-clean/
